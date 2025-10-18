@@ -276,3 +276,80 @@ The key benefit here is **automation**. Instead of you manually stopping to writ
 **Pro Tip:** If you find the script useful beyond the immediate context, you can promote it into a permanent tool or command. For instance, if the AI generated a great log-processing script, you might later turn it into a custom slash command (Tip \#2) for easy reuse. The combination of Gemini’s generative power and the extension hooks means your toolkit can continuously evolve as you use the CLI.
 
 In summary, **don’t restrict Gemini to what it comes with**. Treat it as a junior developer who can whip up new programs or even mini-servers to help solve the problem. This approach embodies the agentic philosophy of Gemini CLI – it will figure out what tools it needs, even if it has to code them on the spot.
+
+## Tip 9: Use Gemini CLI for System Troubleshooting & Configuration
+
+**Quick use-case:** You can run Gemini CLI outside of a code project to help with general system tasks – think of it as an intelligent assistant for your OS. For example, if your shell is misbehaving, you could open Gemini in your home directory and ask: “Fix my .bashrc file, it has an error.” Gemini can then open and edit your config file for you.
+
+This tip highlights that **Gemini CLI isn’t just for coding projects – it’s your AI helper for your whole development environment**. Many users (especially Googlers) have used Gemini to customize their dev setup or fix issues on their machine:
+
+* **Editing dotfiles:** You can load your shell configuration (.bashrc or .zshrc) by referencing it (@\~/.bashrc) and then ask Gemini CLI to optimize or troubleshoot it. For instance, “My PATH isn’t picking up Go binaries, can you edit my .bashrc to fix that?” The AI can insert the correct export line. It will show you the diff for confirmation before saving changes.
+
+* **Diagnosing errors:** If you encounter a cryptic error in your terminal or an application log, you can copy it and feed it to Gemini CLI. It will analyze the error message and often suggest steps to resolve it. This is similar to how one might use StackOverflow or Google, but with the AI directly examining your scenario. For example: “When I run npm install, I get an EACCES permission error – how do I fix this?” Gemini might detect it’s a permissions issue in node\_modules and guide you to change directory ownership or use a proper node version manager.
+
+* **Running outside a project:** By default, if you run gemini in a directory without a .gemini context, it just means no project-specific context is loaded – but you can still use the CLI fully. This is great for ad-hoc tasks like system troubleshooting. You might not have any code files for it to consider, but you can still run shell commands through it or let it fetch web info. Essentially, you’re treating Gemini CLI as an AI-powered terminal that can *do* things for you, not just chat.
+
+* **Workstation customization:** Want to change a setting or install a new tool? You can ask Gemini CLI, “Install Docker on my system” or “Configure my Git to sign commits with GPG.” The CLI will attempt to execute the steps. It might fetch instructions from the web (using the search tool) and then run the appropriate shell commands. Of course, always watch what it’s doing and approve the commands – but it can save time by automating multi-step setup processes. One real example: a user asked Gemini CLI to “set my macOS Dock preferences to auto-hide and remove the delay,” and the AI was able to execute the necessary defaults write commands.
+
+Think of this mode as using Gemini CLI as a **smart shell**. In fact, you can combine this with Tip 16 (shell passthrough mode) – sometimes you might drop into \! shell mode to verify something, then go back to AI mode to have it analyze output.
+
+**Caveat:** When doing system-level tasks, be cautious with commands that have widespread impact (like rm \-rf or system config changes). Gemini CLI will usually ask for confirmation, and it doesn’t run anything without you seeing it. But as a power user, you should have a sense of what changes are being made. If unsure, ask Gemini to explain a command before running (e.g., “Explain what defaults write com.apple.dock autohide-delay \-float 0 does” – it will gladly explain rather than just execute if you prompt it in that way).
+
+**Troubleshooting bonus:** Another neat use is using Gemini CLI to parse logs or config files looking for issues. For instance, “Scan this Apache config for mistakes” (with @httpd.conf), or “Look through syslog for errors around 2 PM yesterday” (with an @/var/log/syslog if accessible). It’s like having a co-administrator. It can even suggest likely causes for crashes or propose fixes for common error patterns.
+
+In summary, **don’t hesitate to fire up Gemini CLI as your assistant for environment issues**. It’s there to accelerate all your workflows – not just writing code, but maintaining the system that you write code on. Many users report that customizing their dev environment with Gemini’s help feels like having a tech buddy always on call to handle the tedious or complex setup steps.
+
+## Tip 10: YOLO Mode – Auto-Approve Tool Actions (Use with Caution)
+
+**Quick use-case:** If you’re feeling confident (or adventurous), you can let Gemini CLI run tool actions without asking for your confirmation each time. This is **YOLO mode** (You Only Live Once). It’s enabled by the \--yolo flag or by pressing Ctrl+Y during a [session](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=,prompt%20in%20an%20external%20editor). In YOLO mode, as soon as the AI decides on a tool (like running a shell command or writing to a file), it executes it immediately, without that “Approve? (y/n)” prompt.
+
+**Why use YOLO mode?** Primarily for speed and convenience **when you trust the AI’s actions**. Experienced users might toggle YOLO on if they’re doing a lot of repetitive safe operations. For example, if you ask Gemini to generate 10 different files one after another, approving each can slow down the flow; YOLO mode would just let them all be written automatically. Another scenario is using Gemini CLI in a completely automated script or CI pipeline – you might run it headless with \--yolo so it doesn’t pause for confirmation.
+
+To start in YOLO mode from the get-go, launch the CLI with:
+
+gemini \--yolo
+
+Or the short form gemini \-y. You’ll see some indication in the CLI (like a different prompt or a notice) that auto-approve is [on](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=initial%20prompt.%20%2A%20%60,to%20revert%20changes). During an interactive session, you can toggle it by pressing **Ctrl+Y** at any [time](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=,prompt%20in%20an%20external%20editor) – the CLI will usually display a message like “YOLO mode enabled (all actions auto-approved)” in the footer.
+
+**Big warning:** YOLO mode is powerful but **risky**. The Gemini team themselves labels it for “daring users” – meaning you should be aware that the AI could potentially execute a dangerous command without asking. In normal mode, if the AI decided to run rm \-rf / (worst-case scenario), you’d obviously decline. In YOLO mode, that command would run immediately (and likely ruin your day). While such extreme mistakes are unlikely (the AI’s system prompt includes safety guidelines), the whole point of confirmations is to catch any unwanted action. YOLO removes that safety net.
+
+**Best practices for YOLO:** If you want some of the convenience without full risk, consider *allow-listing* specific commands. For example, you can configure in settings that certain tools or command patterns don’t require confirmation (like allowing all git commands, or read-only actions). In fact, Gemini CLI supports a config for skipping confirmation on specific commands: e.g., you can set something like "tools.shell.autoApprove": \["git ", "npm test"\] to always run [those](https://google-gemini.github.io/gemini-cli/docs/cli/configuration.html#:~:text=match%20at%20L247%20%60%5B,Default%3A%20%60undefined). This way, you might not need YOLO mode globally – you selectively YOLO only safe commands. Another approach: run Gemini in a sandbox or container when using YOLO, so even if it does something wild, your system is insulated (Gemini has a \--sandbox flag to run tools in a Docker [container](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=echo%20,gemini)).
+
+Many advanced users toggle YOLO on and off frequently – turning it on when doing a string of minor file edits or queries, and off when about to do something critical. You can do the same, using the keyboard shortcut as a quick toggle.
+
+In summary, **YOLO mode eliminates friction at the cost of oversight**. It’s a pro feature to use sparingly and wisely. It truly demonstrates trust in the AI (or recklessness\!). If you’re new to Gemini CLI, you should probably avoid YOLO until you clearly understand the patterns of what it tends to do. If you do use it, double down on having version control or backups – just in case.
+
+*(If it’s any consolation, you’re not alone – many in the community joke about “I YOLO’ed and Gemini did something crazy.” So use it, but… well, you only live once.)*
+
+## Tip 11: Headless & Scripting Mode (Run Gemini CLI in the Background)
+
+**Quick use-case:** You can use Gemini CLI in scripts or automation by running it in **headless mode**. This means you provide a prompt (or even a full conversation) via command-line arguments or environment variables, and Gemini CLI produces an output and exits. It’s great for integrating with other tools or triggering AI tasks on a schedule.
+
+For instance, to get a one-off answer without opening the REPL, you’ve seen you can use gemini \-p "...prompt...". This is already headless usage: it prints the model’s response and returns to the [shell](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Non,and%20get%20a%20single%20response). But there’s more you can do:
+
+* **System prompt override:** If you want to run Gemini CLI with a custom system persona or instruction set (different from the default), you can use the environment variable GEMINI\_SYSTEM\_MD. By setting this, you tell Gemini CLI to ignore its built-in system prompt and use your provided file [instead](https://medium.com/google-cloud/practical-gemini-cli-bring-your-own-system-instruction-19ea7f07faa2#:~:text=The%20,rather%20than%20its%20hardcoded%20defaults). For example:
+
+export GEMINI\_SYSTEM\_MD="/path/to/custom\_system.md"  
+gemini \-p "Perform task X with high caution"
+
+This would load your custom\_system.md as the system prompt (the “role” and rules the AI follows) before executing the [prompt](https://medium.com/google-cloud/practical-gemini-cli-bring-your-own-system-instruction-19ea7f07faa2#:~:text=The%20feature%20is%20enabled%20by,specific%20configurations). Alternatively, if you set GEMINI\_SYSTEM\_MD=true, the CLI will look for a file named system.md in the current project’s .gemini [directory](https://medium.com/google-cloud/practical-gemini-cli-bring-your-own-system-instruction-19ea7f07faa2#:~:text=The%20feature%20is%20enabled%20by,specific%20configurations). This feature is very advanced – it essentially allows you to *replace the built-in brain* of the CLI with your own instructions, which some users do for specialized workflows (like simulating a specific persona or enforcing ultra-strict policies). Use it carefully, as replacing the core prompt can affect tool usage (the core prompt contains important directions for how the AI selects and uses [tools](https://medium.com/google-cloud/practical-gemini-cli-bring-your-own-system-instruction-19ea7f07faa2#:~:text=If%20you%20read%20my%20previous,proper%20functioning%20of%20Gemini%20CLI)).
+
+* **Direct prompt via CLI:** Aside from \-p, there’s also \-i (interactive prompt) which starts a session with an initial prompt, and then keeps it open. For example: gemini \-i "Hello, let's debug something" will open the REPL and already have said hello to the model. This is useful if you want the first question to be asked immediately when starting.
+
+* **Scripting with shell pipes:** You can pipe not just text but also files or command outputs into Gemini. For example: gemini \-p "Summarize this log:" \< big\_log.txt will feed the content of big\_log.txt into the prompt (after the phrase "Summarize this log:"). Or you might do some\_command | gemini \-p "Given the above output, what went wrong?". This technique allows you to compose Unix tools with AI analysis. It’s headless in the sense that it’s a single-pass operation.
+
+* **Running in CI/CD:** You could incorporate Gemini CLI into build processes. For instance, a CI pipeline might run a test and then use Gemini CLI to automatically analyze failing test output and post a comment. Using the \-p flag and environment auth, this can be scripted. (Of course, ensure the environment has the API key or auth needed.)
+
+One more headless trick: **the \--format=json flag** (or config setting). Gemini CLI can output responses in JSON format instead of the human-readable text if you configure [it](https://google-gemini.github.io/gemini-cli/docs/cli/configuration.html#:~:text=). This is useful for programmatic consumption – your script can parse the JSON to get the answer or any tool actions details.
+
+**Why headless mode matters:** It transforms Gemini CLI from an interactive assistant into a **backend service** or utility that other programs can call. You could schedule a cronjob that runs a Gemini CLI prompt nightly (imagine generating a report or cleaning up something with AI logic). You could wire up a button in an IDE that triggers a headless Gemini run for a specific task.
+
+**Example:** Let’s say you want a daily summary of a news website. You could have a script:
+
+gemini \-p "Web-fetch \\"[https://news.site/top-stories\\\\](https://news.site/top-stories\\\\)" and extract the headlines, then write them to headlines.txt"
+
+With \--yolo perhaps, so it won’t ask confirmation to write the file. This would use the web fetch tool to get the page and the file write tool to save the headlines. All automatically, no human in the loop. The possibilities are endless once you treat Gemini CLI as a scriptable component.
+
+In summary, **Headless Mode** enables automation. It’s the bridge between Gemini CLI and other systems. Mastering it means you can scale up your AI usage – not just when you’re typing in the terminal, but even when you aren’t around, your AI agent can do work for you.
+
+*(Tip: For truly long-running non-interactive tasks, you might also look into Gemini CLI’s “Plan” mode or how it can generate multi-step plans without intervention. However, those are advanced topics beyond this scope. In most cases, a well-crafted single prompt via headless mode can achieve a lot.)*
