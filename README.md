@@ -129,3 +129,32 @@ This will show any registered servers and what tool names they [expose](https://
 When creating your own, be mindful of security: by default, custom MCP tools require confirmation unless you mark them as trusted. You can control safety with settings like trust: true for a server (which auto-approves its tool actions) or by whitelisting specific safe tools and blacklisting dangerous [ones](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=,takes%20precedence).
 
 In short, **MCP servers unlock limitless integration**. They’re a pro feature that lets Gemini CLI become a glue between your AI assistant and whatever system you need it to work with. If you’re interested in building one, check out the official [MCP guide](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Transport%20) and community examples.
+
+## Tip 4: Leverage Memory Addition & Recall
+
+**Quick use-case:** Keep important facts at your AI’s fingertips by adding them to its long-term memory. For example, after figuring out a database port or an API token, you can do:
+
+\> /memory add "Our staging RabbitMQ is on port 5673"
+
+This will store that fact so you (or the AI) don’t forget it [later](https://binaryverseai.com/gemini-cli-open-source-ai-tool/#:~:text=Gemini%20CLI%20Ultimate%20Agent%3A%2060,a%20branch%20of%20conversation). You can then recall everything in memory with /memory show at any time.
+
+The **/memory** commands provide a simple but powerful mechanism for *persistent memory*. When you use /memory add \<text\>, the given text is appended to your project’s global context (technically, it’s saved into the global \~/.gemini/GEMINI.md file or the project’s [GEMINI.md)](https://genmind.ch/posts/Howto-Supercharge-Your-Terminal-with-Gemini-CLI/#:~:text=,load%20memory%20from%20%60GEMINI.md). It’s a bit like taking a note and pinning it to the AI’s virtual bulletin board. Once added, the AI will always see that note in the prompt context for future interactions, across sessions.
+
+Consider an example: you’re debugging an issue and discover a non-obvious insight (“The config flag X\_ENABLE must be set to true or the service fails to start”). If you add this to memory, later on if you or the AI are discussing a related problem, it won’t overlook this critical detail – it’s in the context.
+
+**Using /memory:**
+
+* \*/memory add "\<text\>"\* – Add a fact or note to memory (persistent context). This updates the GEMINI.md immediately with the new entry.
+
+* \*/memory show\* – Display the full content of the memory (i.e. the combined context file that’s currently loaded).
+
+* \*/memory refresh\* – Reload the context from disk (useful if you manually edited the GEMINI.md file outside of Gemini CLI, or if multiple people are collaborating on it).
+
+Because the memory is stored in Markdown, you can also manually edit the GEMINI.md file to curate or organize the info. The /memory commands are there for convenience during conversation, so you don’t have to open an editor.
+
+**Pro Tip:** This feature is great for “decision logs.” If you decide on an approach or rule during a chat (e.g., a certain library to use, or an agreed code style), add it to memory. The AI will then recall that decision and avoid contradicting it later. It’s especially useful in long sessions that might span hours or days – by saving key points, you mitigate the model’s tendency to forget earlier context when the conversation gets long.
+
+Another use is personal notes. Because \~/.gemini/GEMINI.md (global memory) is loaded for all sessions, you could put general preferences or information there. For example, “The user’s name is Alice. Speak politely and avoid slang.” It’s like configuring the AI’s persona or global knowledge. Just be aware that global memory applies to *all* projects, so don’t clutter it with project-specific info.
+
+In summary, **Memory Addition & Recall** helps Gemini CLI maintain state. Think of it as a knowledge base that grows with your project. Use it to avoid repeating yourself or to remind the AI of facts it would otherwise have to rediscover from scratch.
+
