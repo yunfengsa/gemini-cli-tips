@@ -6,3 +6,37 @@
 
 In practical terms, Gemini CLI acts like a supercharged pair programmer and command-line assistant. It excels at coding tasks, debugging, content generation, and even system automation, all through natural language prompts. Before diving into pro tips, let’s quickly recap how to set up Gemini CLI and get it running.
 
+## Getting Started
+
+**Installation:** You can install Gemini CLI via npm. For a global install, use:
+
+> npm install \-g @google/gemini-cli
+
+Or run it without installing using npx:
+
+> npx @google/gemini-cli
+
+Gemini CLI is available on all major platforms (it’s built with Node.js/TypeScript). Once installed, simply run the gemini command in your terminal to launch the interactive [CLI](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Interactive%20Mode%20,conversational%20session).
+
+**Authentication:** On first use, you’ll need to authenticate with the Gemini service. You have two options: (1) **Google Account Login (free tier)** – this lets you use Gemini 2.5 Pro for free with generous usage limits (about 60 requests/minute and 1,000 requests per [day)](https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/#:~:text=Unmatched%20usage%20limits%20for%20individual,developers). On launch, Gemini CLI will prompt you to sign in with a Google account (no billing [required)](https://genmind.ch/posts/Howto-Supercharge-Your-Terminal-with-Gemini-CLI/#:~:text=%2A%20Google,Google%20AI%20Studio%2C%20then%20run). (2) **API Key (paid or higher-tier access)** – you can get an API key from Google AI [Studio](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=1,key%20from%20Google%20AI%20Studio) and set the environment variable GEMINI\_API\_KEY to use [it](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Method%201%3A%20Shell%20Environment%20Variable,zshrc).
+
+API key usage can offer higher quotas and enterprise data‑use protections; prompts aren’t used for training on paid/billed usage, though logs may be retained for [safety](https://genmind.ch/posts/Howto-Supercharge-Your-Terminal-with-Gemini-CLI/#:~:text=responses%20may%20be%20logged%20for,Google%20AI%20Studio%2C%20then%20run).
+
+For example, add to your shell profile:
+
+> export GEMINI\_API\_KEY="YOUR\_KEY\_HERE"
+
+**Basic Usage:** To start an interactive session, just run gemini with no arguments. You’ll get a gemini\> prompt where you can type requests or commands. For instance:
+
+$ gemini  
+gemini\> Create a React recipe management app using SQLite
+
+You can then watch as Gemini CLI creates files, installs dependencies, runs tests, etc., to fulfill your request[\[9\]](https://genmind.ch/posts/Howto-Supercharge-Your-Terminal-with-Gemini-CLI/#:~:text=to%20enter%20the%20interactive%20REPL,language%20prompts%20like)[\[10\]](https://genmind.ch/posts/Howto-Supercharge-Your-Terminal-with-Gemini-CLI/#:~:text=and%20watch%20it%20create%20files%2C,and%20show%20you%20the%20results). If you prefer a one-shot invocation (non-interactive), use the \-p flag with a prompt, for example:
+
+> gemini \-p "Summarize the main points of the attached file. @./report.txt"
+
+This will output a single response and [exit](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=gemini). You can also pipe input into Gemini CLI: for example, echo "Count to 10" | gemini will feed the prompt via [stdin](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=gemini%20,txt).
+
+**CLI Interface:** Gemini CLI provides a rich REPL-like interface. It supports **slash commands** (special commands prefixed with / for controlling the session, tools, and settings) and **bang commands** (prefixed with \! to execute shell commands directly). We’ll cover many of these in the pro tips below. By default, Gemini CLI operates in a safe mode where any action that modifies your system (writing files, running shell commands, etc.) will ask for confirmation. When a tool action is proposed, you’ll see a diff or command and be prompted (Y/n) to approve or reject it. This ensures the AI doesn’t make unwanted changes without your consent.
+
+With the basics out of the way, let’s explore a series of pro tips and hidden features to help you get the most out of Gemini CLI. Each tip is presented with a simple example first, followed by deeper details and nuances. These tips incorporate advice and insights from the tool’s creators (e.g. Taylor Mullen) and the Google Developer Relations team, as well as the broader community, to serve as a **canonical guide for power users** of Gemini CLI.
