@@ -148,17 +148,17 @@ Gemini CLI将识别 `/test:gen` 并用提供的参数（在本例中是需求）
 
 **快速用例：** 假设你希望Gemini与外部系统或不是内置的自定义工具交互——例如，查询专有数据库，或与Figma设计集成。你可以通过运行自定义**模型上下文协议（MCP）服务器**并将其插入Gemini [CLI](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Extend%20the%20CLI%20with%20your,add%7Clist%7Cremove%3E%60%20commands)来实现。MCP服务器让你可以向Gemini添加新工具和能力，有效地**扩展智能体**。
 
-Gemini CLI comes with several MCP servers out-of-the-box (for instance, ones enabling Google Search, code execution sandboxes, etc.), and you can add your own. An MCP server is essentially an external process (it could be a local script, a microservice, or even a cloud endpoint) that speaks a simple protocol to handle tasks for Gemini. This architecture is what makes Gemini CLI so [extensible](https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/#:~:text=,interactively%20within%20your%20scripts).
+Gemini CLI自带几个开箱即用的MCP服务器（例如，支持Google搜索、代码执行沙箱等的服务器），你也可以添加自己的。MCP服务器本质上是一个外部进程（可以是本地脚本、微服务，甚至是云端点），它使用简单的协议来处理Gemini的任务。这种架构使Gemini CLI如此[可扩展](https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/#:~:text=,interactively%20within%20your%20scripts)。
 
-**Examples of MCP servers:** Some community and Google-provided MCP integrations include a **Figma MCP** (to fetch design details from Figma), a **Clipboard MCP** (to read/write from your system clipboard), and others. In fact, in an internal demo, the Gemini CLI team showcased a "Google Docs MCP" server that allowed saving content directly to Google [Docs](https://cloud.google.com/blog/topics/developers-practitioners/agent-factory-recap-deep-dive-into-gemini-cli-with-taylor-mullen#:~:text=%2A%20Utilize%20the%20google,summary%20directly%20to%20Google%20Docs). The idea is that whenever Gemini needs to perform an action that the built-in tools can't handle, it can delegate to your MCP server.
+**MCP服务器示例：** 一些社区和Google提供的MCP集成包括**Figma MCP**（从Figma获取设计细节）、**剪贴板MCP**（从系统剪贴板读取/写入）等。实际上，在一次内部演示中，Gemini CLI团队展示了一个"Google Docs MCP"服务器，允许直接将内容保存到Google [Docs](https://cloud.google.com/blog/topics/developers-practitioners/agent-factory-recap-deep-dive-into-gemini-cli-with-taylor-mullen#:~:text=%2A%20Utilize%20the%20google,summary%20directly%20to%20Google%20Docs)。其思想是，每当Gemini需要执行内置工具无法处理的操作时，它可以委托给你的MCP服务器。
 
-**How to add one:** You can configure MCP servers via your `settings.json` or using the CLI. For a quick setup, try the CLI command:
+**如何添加：** 你可以通过 `settings.json` 或使用CLI配置MCP服务器。快速设置，尝试CLI命令：
 
 ```bash
 gemini mcp add myserver --command "python3 my_mcp_server.py" --port 8080
 ```
 
-This would register a server named "myserver" that Gemini CLI will launch by running the given command (here a Python module) on port 8080\. In `~/.gemini/settings.json`, it would add an entry under `mcpServers`. For example:
+这将注册一个名为"myserver"的服务器，Gemini CLI将通过运行给定的命令（这里是Python模块）在端口8080上启动它。在 `~/.gemini/settings.json` 中，它会在 `mcpServers` 下添加一个条目。例如：
 
 ```json
 "mcpServers": {
@@ -171,172 +171,172 @@ This would register a server named "myserver" that Gemini CLI will launch by run
 }
 ```
 
-This configuration (based on the official docs) tells Gemini how to start the MCP server and [where](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Example%20). Once running, the tools provided by that server become available to Gemini CLI. You can list all MCP servers and their tools with the slash command:
+此配置（基于官方文档）告诉Gemini如何启动MCP服务器以及在[哪里](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Example%20)。运行后，该服务器提供的工具将可供Gemini CLI使用。你可以使用斜杠命令列出所有MCP服务器及其工具：
 
 ```bash
 /mcp
 ```
 
-This will show any registered servers and what tool names they [expose](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Command%20Description%20,List%20active%20extensions).
+这将显示任何已注册的服务器及其公开的工具[名称](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Command%20Description%20,List%20active%20extensions)。
 
-**Power of MCP:** MCP servers can provide **rich, multi-modal results**. For instance, a tool served via MCP could return an image or a formatted table as part of the response to Gemini [CLI](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Capabilities%3A). They also support OAuth 2.0, so you can securely connect to APIs (like Google's APIs, GitHub, etc.) via an MCP tool without exposing [credentials](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Extend%20the%20CLI%20with%20your,add%7Clist%7Cremove%3E%60%20commands). Essentially, if you can code it, you can wrap it as an MCP tool - turning Gemini CLI into a hub that orchestrates many services.
+**MCP的威力：** MCP服务器可以提供**丰富的多模态结果**。例如，通过MCP提供的工具可以返回图像或格式化表格作为对Gemini [CLI](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Capabilities%3A)响应的一部分。它们还支持OAuth 2.0，因此你可以通过MCP工具安全地连接到API（如Google的API、GitHub等），而无需暴露[凭据](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Extend%20the%20CLI%20with%20your,add%7Clist%7Cremove%3E%60%20commands)。本质上，如果你可以编码它，就可以将其包装为MCP工具——将Gemini CLI变成编排许多服务的中心。
 
-**Default vs. custom:** By default, Gemini CLI's built-in tools cover a lot (reading files, web search, executing shell commands, etc.), but MCP lets you go beyond. Some advanced users have created MCP servers to interface with internal systems or to perform specialized data processing. For example, you could have a `database-mcp` that provides a `/query_db` tool for running SQL queries on a company database, or a `jira-mcp` to create tickets via natural language.
+**默认vs自定义：** 默认情况下，Gemini CLI的内置工具涵盖很多功能（读取文件、网络搜索、执行shell命令等），但MCP让你可以走得更远。一些高级用户创建了MCP服务器来与内部系统交互或执行专门的数据处理。例如，你可以有一个 `database-mcp`，提供 `/query_db` 工具在公司数据库上运行SQL查询，或者 `jira-mcp` 通过自然语言创建工单。
 
-When creating your own, be mindful of security: by default, custom MCP tools require confirmation unless you mark them as trusted. You can control safety with settings like `trust: true` for a server (which auto-approves its tool actions) or by whitelisting specific safe tools and blacklisting dangerous [ones](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=,takes%20precedence).
+创建自己的MCP时，要注意安全性：默认情况下，自定义MCP工具需要确认，除非你将它们标记为受信任。你可以通过设置控制安全性，如为服务器设置 `trust: true`（自动批准其工具操作）或通过白名单列出特定的安全工具和黑名单列出危险[工具](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=,takes%20precedence)。
 
-In short, **MCP servers unlock limitless integration**. They're a pro feature that lets Gemini CLI become a glue between your AI assistant and whatever system you need it to work with. If you're interested in building one, check out the official [MCP guide](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Transport%20) and community examples.
+简而言之，**MCP服务器解锁了无限的集成可能性**。它们是一个专业功能，让Gemini CLI成为你的AI助手与你需要它协作的任何系统之间的粘合剂。如果你有兴趣构建一个，请查看官方[MCP指南](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Transport%20)和社区示例。
 
-## Tip 4: Leverage Memory Addition & Recall
+## 技巧4：利用记忆添加与回调
 
-**Quick use-case:** Keep important facts at your AI's fingertips by adding them to its long-term memory. For example, after figuring out a database port or an API token, you can do:
+**快速用例：** 通过将重要事实添加到AI的长期记忆中，让它们随时可用。例如，在找出数据库端口或API令牌后，你可以执行：
 
 ```bash
-/memory add "Our staging RabbitMQ is on port 5673"
+/memory add "我们的staging RabbitMQ在端口5673上"
 ```
 
-This will store that fact so you (or the AI) don't forget it [later](https://binaryverseai.com/gemini-cli-open-source-ai-tool/#:~:text=Gemini%20CLI%20Ultimate%20Agent%3A%2060,a%20branch%20of%20conversation). You can then recall everything in memory with `/memory show` at any time.
+这将存储该事实，这样你（或AI）以后不会忘记[它](https://binaryverseai.com/gemini-cli-open-source-ai-tool/#:~:text=Gemini%20CLI%20Ultimate%20Agent%3A%2060,a%20branch%20of%20conversation)。然后你可以随时使用 `/memory show` 回调记忆中的所有内容。
 
-The `/memory` commands provide a simple but powerful mechanism for *persistent memory*. When you use `/memory add <text>`, the given text is appended to your project's global context (technically, it's saved into the global `~/.gemini/GEMINI.md` file or the project's [`GEMINI.md`](https://genmind.ch/posts/Howto-Supercharge-Your-Terminal-with-Gemini-CLI/#:~:text=,load%20memory%20from%20%60GEMINI.md). It's a bit like taking a note and pinning it to the AI's virtual bulletin board. Once added, the AI will always see that note in the prompt context for future interactions, across sessions.
+`/memory` 命令提供了一个简单但强大的*持久记忆*机制。当你使用 `/memory add <文本>` 时，给定的文本会被附加到你项目的全局上下文中（技术上，它被保存到全局 `~/.gemini/GEMINI.md` 文件或项目的[`GEMINI.md`](https://genmind.ch/posts/Howto-Supercharge-Your-Terminal-with-Gemini-CLI/#:~:text=,load%20memory%20from%20%60GEMINI.md)中）。这有点像做笔记并将其固定在AI的虚拟公告板上。添加后，AI将始终在未来交互的提示上下文中看到该注释，跨会话。
 
-Consider an example: you're debugging an issue and discover a non-obvious insight ("The config flag `X_ENABLE` must be set to `true` or the service fails to start"). If you add this to memory, later on if you or the AI are discussing a related problem, it won't overlook this critical detail - it's in the context.
+考虑一个例子：你正在调试一个问题，发现了一个不明显的见解（"配置标志 `X_ENABLE` 必须设置为 `true`，否则服务无法启动"）。如果你将此添加到记忆中，以后如果你或AI讨论相关问题时，它不会忽略这个关键细节——它在上下文中。
 
-**Using `/memory`:**
+**使用 `/memory`：**
 
-* `/memory add "<text>"` - Add a fact or note to memory (persistent context). This updates the `GEMINI.md` immediately with the new entry.
+* `/memory add "<文本>"` - 向记忆添加事实或注释（持久上下文）。这会立即用新条目更新 `GEMINI.md`。
 
-* `/memory show` - Display the full content of the memory (i.e. the combined context file that's currently loaded).
+* `/memory show` - 显示记忆的完整内容（即当前加载的组合上下文文件）。
 
-* `/memory refresh` - Reload the context from disk (useful if you manually edited the `GEMINI.md` file outside of Gemini CLI, or if multiple people are collaborating on it).
+* `/memory refresh` - 从磁盘重新加载上下文（如果你在Gemini CLI之外手动编辑了 `GEMINI.md` 文件，或者多人正在协作，这很有用）。
 
-Because the memory is stored in Markdown, you can also manually edit the `GEMINI.md` file to curate or organize the info. The `/memory` commands are there for convenience during conversation, so you don't have to open an editor.
+因为记忆存储在Markdown中，你也可以手动编辑 `GEMINI.md` 文件来整理或组织信息。`/memory` 命令是为了在对话期间方便使用，这样你就不必打开编辑器。
 
-**Pro Tip:** This feature is great for "decision logs." If you decide on an approach or rule during a chat (e.g., a certain library to use, or an agreed code style), add it to memory. The AI will then recall that decision and avoid contradicting it later. It's especially useful in long sessions that might span hours or days - by saving key points, you mitigate the model's tendency to forget earlier context when the conversation gets long.
+**专业技巧：** 这个功能非常适合"决策日志"。如果你在聊天期间决定了某种方法或规则（例如，使用某个库，或约定的代码风格），请将其添加到记忆中。然后AI会回忆起该决定，以后不会与之矛盾。在可能持续数小时或数天的长会话中特别有用——通过保存关键点，你可以缓解模型在对话变长时忘记早期上下文的倾向。
 
-Another use is personal notes. Because `~/.gemini/GEMINI.md` (global memory) is loaded for all sessions, you could put general preferences or information there. For example, "The user's name is Alice. Speak politely and avoid slang." It's like configuring the AI's persona or global knowledge. Just be aware that global memory applies to *all* projects, so don't clutter it with project-specific info.
+另一个用途是个人笔记。因为 `~/.gemini/GEMINI.md`（全局记忆）对所有会话加载，你可以在那里放置一般偏好或信息。例如，"用户的名字是Alice。礼貌地说话，避免俚语。"这就像配置AI的角色或全局知识。只是要注意全局记忆适用于*所有*项目，所以不要用项目特定的信息杂乱它。
 
-In summary, **Memory Addition & Recall** helps Gemini CLI maintain state. Think of it as a knowledge base that grows with your project. Use it to avoid repeating yourself or to remind the AI of facts it would otherwise have to rediscover from scratch.
+总之，**记忆添加与回调**帮助Gemini CLI维护状态。将其视为随项目增长的知识库。使用它来避免重复自己或提醒AI它否则必须从头重新发现的事实。
 
-## Tip 5: Use Checkpointing and `/restore` as an Undo Button
+## 技巧5：使用检查点和 `/restore` 作为撤销按钮
 
-**Quick use-case:** If Gemini CLI makes a series of changes to your files that you're not happy with, you can *instantly roll back* to a prior state. Enable checkpointing when you start Gemini (or in settings), and use the `/restore` command to undo changes like a lightweight Git [revert](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=,Exit%20the%20Gemini%20CLI). `/restore` rolls back your workspace to the saved checkpoint; conversation state may be affected depending on how the checkpoint was captured.
+**快速用例：** 如果Gemini CLI对你的文件进行了一系列你不满意的更改，你可以*立即回滚*到之前的状态。在启动Gemini时启用检查点（或在设置中），并使用 `/restore` 命令撤销更改，就像轻量级的Git [revert](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=,Exit%20the%20Gemini%20CLI)。`/restore` 将你的工作区回滚到保存的检查点；对话状态可能会受到影响，具体取决于检查点的捕获方式。
 
-Gemini CLI's **checkpointing** feature acts as a safety net. When enabled, the CLI takes a snapshot of your project's files *before* each tool execution that modifies [files](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=When%20,snapshot%20before%20tools%20modify%20files). If something goes wrong, you can revert to the last known good state. It's essentially version control for the AI's actions, without you needing to manually commit to Git each time.
+Gemini CLI的**检查点**功能充当安全网。启用后，CLI在每次修改[文件](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=When%20,snapshot%20before%20tools%20modify%20files)的工具执行*之前*会对项目文件进行快照。如果出了问题，你可以恢复到最后已知的良好状态。它本质上是AI操作的版本控制，无需你每次手动提交到Git。
 
-**How to use it:** You can turn on checkpointing by launching the CLI with the `--checkpointing` flag:
+**如何使用：** 你可以通过使用 `--checkpointing` 标志启动CLI来打开检查点：
 
 ```bash
 gemini --checkpointing
 ```
 
-Alternatively, you can make it the default by adding to your config (`"checkpointing": { "enabled": true }` in [`settings.json`](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=%7B%20,true)). Once active, you'll notice that each time Gemini is about to write to a file, it says something like "Checkpoint saved."
+或者，你可以通过在配置中添加（在[`settings.json`](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=%7B%20,true)中使用 `"checkpointing": { "enabled": true }`）将其设为默认值。激活后，你会注意到每次Gemini准备写入文件时，它会说类似"检查点已保存"的内容。
 
-If you then realize an AI-made edit is problematic, you have two options:
+如果你随后意识到AI所做的编辑有问题，你有两个选项：
 
-* Run `/restore list` (or just `/restore` with no arguments) to see a list of recent checkpoints with timestamps and descriptions.
+* 运行 `/restore list`（或不带参数的 `/restore`）查看带有时间戳和描述的最近检查点列表。
 
-* Run `/restore <id>` to rollback to a specific checkpoint. If you omit the id and there's only one pending checkpoint, it will restore that by [default](https://medium.com/@ferreradaniel/gemini-cli-free-ai-tool-upgrade-5-new-features-you-need-right-now-04cfefac5e93#:~:text=Step).
+* 运行 `/restore <id>` 回滚到特定检查点。如果你省略id且只有一个待处理的检查点，它将默认恢复[那个](https://medium.com/@ferreradaniel/gemini-cli-free-ai-tool-upgrade-5-new-features-you-need-right-now-04cfefac5e93#:~:text=Step)。
 
-For example:
+例如：
 
 ```bash
 /restore
 ```
 
-Gemini CLI might output:
+Gemini CLI可能输出：
 
 0: \[2025-09-22 10:30:15\] Before running 'apply_patch'  
 1: \[2025-09-22 10:45:02\] Before running 'write_file'
 
-You can then do `/restore 0` to revert all file changes (and even the conversation context) back to how it was at that checkpoint. In this way, you can "undo" a mistaken code refactor or any other changes Gemini [made](https://medium.com/@ferreradaniel/gemini-cli-free-ai-tool-upgrade-5-new-features-you-need-right-now-04cfefac5e93#:~:text=1,point%20and%20roll%20back%20instantly).
+然后你可以执行 `/restore 0` 将所有文件更改（甚至对话上下文）恢复到该检查点时的状态。通过这种方式，你可以"撤销"错误的代码重构或Gemini [做出](https://medium.com/@ferreradaniel/gemini-cli-free-ai-tool-upgrade-5-new-features-you-need-right-now-04cfefac5e93#:~:text=1,point%20and%20roll%20back%20instantly)的任何其他更改。
 
-**What gets restored:** The checkpoint captures the state of your working directory (all files that Gemini CLI is allowed to modify) and the workspace files (conversation state may also be rolled back depending on how the checkpoint was captured). When you restore, it overwrites files to the old version and resets the conversation memory to that snapshot. It's like time-traveling the AI agent back to before it made the wrong turn. Note that it won't undo external side effects (for example, if the AI ran a database migration, it can't undo that), but anything in the file system and chat context is fair game.
+**恢复的内容：** 检查点捕获你的工作目录状态（Gemini CLI被允许修改的所有文件）和工作区文件（对话状态也可能被回滚，具体取决于检查点的捕获方式）。恢复时，它会将文件覆盖到旧版本并将对话记忆重置到该快照。就像让AI智能体时间旅行回到走错路之前。请注意，它不会撤销外部副作用（例如，如果AI运行了数据库迁移，它无法撤销），但文件系统和聊天上下文中的任何内容都可以撤销。
 
-**Best practices:** It's a good idea to keep checkpointing on for non-trivial tasks. The overhead is small, and it provides peace of mind. If you find you don't need a checkpoint (everything went well), you can always clear it or just let the next one overwrite it. The development team recommends using checkpointing especially before multi-step code [edits](https://medium.com/@ferreradaniel/gemini-cli-free-ai-tool-upgrade-5-new-features-you-need-right-now-04cfefac5e93#:~:text=Tips%20to%20avoid%20messy%20rollbacks). For mission-critical projects, though, you should still use a proper version control (`git`) as your primary safety [net](https://medium.com/@ferreradaniel/gemini-cli-free-ai-tool-upgrade-5-new-features-you-need-right-now-04cfefac5e93#:~:text=No,VS%20Code%20is%20already%20free) - consider checkpoints as a convenience for quick undo rather than a full VCS.
+**最佳实践：** 对于非平凡的任务，保持检查点打开是个好主意。开销很小，并提供安心。如果你发现不需要检查点（一切顺利），你总是可以清除它或让下一个覆盖它。开发团队建议特别在多步骤代码[编辑](https://medium.com/@ferreradaniel/gemini-cli-free-ai-tool-upgrade-5-new-features-you-need-right-now-04cfefac5e93#:~:text=Tips%20to%20avoid%20messy%20rollbacks)之前使用检查点。不过，对于关键任务项目，你仍应使用适当的版本控制（`git`）作为主要安全[网](https://medium.com/@ferreradaniel/gemini-cli-free-ai-tool-upgrade-5-new-features-you-need-right-now-04cfefac5e93#:~:text=No,VS%20Code%20is%20already%20free)——将检查点视为快速撤销的便利，而不是完整的VCS。
 
-In essence, `/restore` lets you use Gemini CLI with confidence. You can let the AI attempt bold changes, knowing you have an *"OH NO" button* to rewind if needed.
+本质上，`/restore` 让你可以放心地使用Gemini CLI。你可以让AI尝试大胆的更改，知道如果需要，你有一个*"哦不"按钮*来倒带。
 
-## Tip 6: Read Google Docs, Sheets, and More. With a Workspace MCP server configured, you can paste a Docs/Sheets link and have the MCP fetch it, subject to permissions
+## 技巧6：读取Google文档、表格等。配置Workspace MCP服务器后，可以粘贴Docs/Sheets链接，让MCP获取内容（需遵守权限规则）
 
-**Quick use-case:** Imagine you have a Google Doc or Sheet with some specs or data that you want the AI to use. Instead of copy-pasting the content, you can provide the link, and with a configured Workspace MCP server Gemini CLI can fetch and read it.
+**快速用例：** 假设你有一个包含一些规格或数据的Google文档或表格，你希望AI使用它。你无需复制粘贴内容，只需提供链接，配置好Workspace MCP服务器后，Gemini CLI就能获取并读取它。
 
-For example:
+例如：
 
 ```bash
-Summarize the requirements from this design doc: https://docs.google.com/document/d/<id>
+总结这个设计文档中的需求：https://docs.google.com/document/d/<id>
 ```
 
-Gemini can pull in the content of that Doc and incorporate it into its response. Similarly, it can read Google Sheets or Drive files by link.
+Gemini可以拉取该文档的内容并将其纳入响应中。同样，它可以通过链接读取Google Sheets或Drive文件。
 
-**How this works:** These capabilities are typically enabled via **MCP integrations**. Google's Gemini CLI team has built (or is working on) connectors for Google Workspace. One approach is running a small MCP server that uses Google's APIs (Docs API, Sheets API, etc.) to retrieve document content when given a URL or [ID](https://github.com/google-gemini/gemini-cli/issues/7175). When configured, you might have slash commands or tools like `/read_google_doc` or simply an auto-detection that sees a Google Docs link and invokes the appropriate tool to fetch it.
+**工作原理：** 这些功能通常通过**MCP集成**实现。Google的Gemini CLI团队已经构建（或正在开发）Google Workspace的连接器。一种方法是运行一个小型MCP服务器，当给定URL或[ID](https://github.com/google-gemini/gemini-cli/issues/7175)时，使用Google的API（Docs API、Sheets API等）检索文档内容。配置后，你可能会有斜杠命令或工具，如 `/read_google_doc`，或者简单的自动检测，看到Google Docs链接并调用适当的工具来获取它。
 
-For example, in an Agent Factory podcast demo, the team used a **Google Docs MCP** to save a summary directly to a [doc](https://cloud.google.com/blog/topics/developers-practitioners/agent-factory-recap-deep-dive-into-gemini-cli-with-taylor-mullen#:~:text=%2A%20Utilize%20the%20google,summary%20directly%20to%20Google%20Docs) - which implies they could also read the doc's content in the first place. In practice, you might do something like:
+例如，在Agent Factory播客演示中，团队使用**Google Docs MCP**将摘要直接保存到[文档](https://cloud.google.com/blog/topics/developers-practitioners/agent-factory-recap-deep-dive-into-gemini-cli-with-taylor-mullen#:~:text=%2A%20Utilize%20the%20google,summary%20directly%20to%20Google%20Docs)中——这意味着他们也可以首先读取文档的内容。实际上，你可能会这样做：
 
 ```bash
 @https://docs.google.com/document/d/XYZ12345
 ```
 
-Including a URL with `@` (the context reference syntax) signals Gemini CLI to fetch that resource. With a Google Doc integration in place, the content of that document would be pulled in as if it were a local file. From there, the AI can summarize it, answer questions about it, or otherwise use it in the conversation.
+在URL前加上 `@`（上下文引用语法）会向Gemini CLI发出获取该资源的信号。配置好Google Doc集成后，该文档的内容将被拉取进来，就像它是本地文件一样。从那里，AI可以总结它、回答关于它的问题，或以其他方式在对话中使用它。
 
-Similarly, if you paste a Google Drive **file link**, a properly configured Drive tool could download or open that file (assuming permissions and API access are set up). **Google Sheets** could be made available via an MCP that runs queries or reads cell ranges, enabling you to ask things like "What's the sum of the budget column in this Sheet \[link\]?" and have the AI calculate it.
+类似地，如果你粘贴Google Drive**文件链接**，正确配置的Drive工具可以下载或打开该文件（假设设置了权限和API访问）。**Google Sheets**可以通过运行查询或读取单元格范围的MCP提供，使你可以询问诸如"此表格\[链接\]中预算列的总和是多少？"之类的问题，并让AI计算它。
 
-**Setting it up:** As of this writing, the Google Workspace integrations may require some tinkering (obtaining API credentials, running an MCP server such as the one described by [Kanshi Tanaike](https://medium.com/google-cloud/managing-google-docs-sheets-and-slides-by-natural-language-with-gemini-cli-and-mcp-62f4dfbef2d5#:~:text=To%20implement%20this%20approach%2C%20I,methods%20for%20each%20respective%20API), etc.). Keep an eye on the official Gemini CLI repository and community forums for ready-to-use extensions - for example, an official Google Docs MCP might become available as a plugin/extension. If you're eager, you can write one following guides on how to use Google APIs within an MCP [server](https://github.com/google-gemini/gemini-cli/issues/7175#:~:text=). It typically involves handling OAuth (which Gemini CLI supports for MCP servers) and then exposing tools like `read_google_doc`.
+**设置方法：** 截至撰写本文时，Google Workspace集成可能需要一些调整（获取API凭据，运行MCP服务器，如[Kanshi Tanaike](https://medium.com/google-cloud/managing-google-docs-sheets-and-slides-by-natural-language-with-gemini-cli-and-mcp-62f4dfbef2d5#:~:text=To%20implement%20this%20approach%2C%20I,methods%20for%20each%20respective%20API)所描述的等）。关注官方Gemini CLI仓库和社区论坛，寻找即用型扩展——例如，官方Google Docs MCP可能作为插件/扩展提供。如果你很急切，你可以按照如何在MCP [服务器](https://github.com/google-gemini/gemini-cli/issues/7175#:~:text=)中使用Google API的指南编写一个。它通常涉及处理OAuth（Gemini CLI支持MCP服务器的OAuth），然后公开像 `read_google_doc` 这样的工具。
 
-**Usage tip:** When you have these tools, using them can be as simple as providing the link in your prompt (the AI might automatically invoke the tool to fetch it) or using a slash command like `/doc open <URL>`. Check `/tools` to see what commands are available - Gemini CLI lists all tools and custom commands [there](https://dev.to/therealmrmumba/7-insane-gemini-cli-tips-that-will-make-you-a-superhuman-developer-2d7h#:~:text=Gemini%20CLI%20includes%20dozens%20of,can%20supercharge%20your%20dev%20process).
+**使用提示：** 当你拥有这些工具时，使用它们可以简单到在提示中提供链接（AI可能会自动调用工具来获取它），或使用斜杠命令如 `/doc open <URL>`。检查 `/tools` 以查看哪些命令可用——Gemini CLI在[那里](https://dev.to/therealmrmumba/7-insane-gemini-cli-tips-that-will-make-you-a-superhuman-developer-2d7h#:~:text=Gemini%20CLI%20includes%20dozens%20of,can%20supercharge%20your%20dev%20process)列出所有工具和自定义命令。
 
-In summary, **Gemini CLI can reach out beyond your local filesystem**. Whether it's Google Docs, Sheets, Drive, or other external content, you can pull data in by reference. This pro tip saves you from manual copy-paste and keeps the context flow natural - just refer to the document or dataset you need, and let the AI grab what's needed. It makes Gemini CLI a true **knowledge assistant** for all the information you have access to, not just the files on your disk.
+总之，**Gemini CLI可以超越你的本地文件系统**。无论是Google Docs、Sheets、Drive还是其他外部内容，你都可以通过引用提取数据。这个专业技巧省去了手动复制粘贴的麻烦，保持上下文流程自然——只需引用你需要的文档或数据集，让AI抓取所需内容。这使Gemini CLI成为你有权访问的所有信息的真正**知识助手**，而不仅仅是磁盘上的文件。
 
-*(Note: Accessing private documents of course requires the CLI to have the appropriate permissions. Always ensure any integration respects security and privacy. In corporate settings, setting up such integrations might involve additional auth steps.)*
+*（注意：访问私有文档当然需要CLI具有适当的权限。始终确保任何集成尊重安全和隐私。在企业环境中，设置此类集成可能涉及额外的身份验证步骤。）*
 
-## Tip 7: Reference Files and Images with `@` for Explicit Context
+## 技巧7：使用 `@` 引用文件和图像获取显式上下文
 
-**Quick use-case:** Instead of describing a file's content or an image verbally, just point Gemini CLI directly to it. Using the `@` syntax, you can attach files, directories, or images into your prompt. This guarantees the AI sees exactly what's in those files as [context](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Reference%20files%20or%20directories%20in,PDFs%2C%20audio%2C%20and%20video%20files). For example:
-
-```bash
-Explain this code to me: @./src/main.js
-```
-
-This will include the contents of `src/main.js` in the prompt (up to Gemini's context size limits), so the AI can read it and explain [it](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Include%20a%20single%20file%3A).
-
-This `@` *file reference* is one of Gemini CLI's most powerful features for developers. It eliminates ambiguity - you're not asking the model to rely on memory or guesswork about the file, you're literally handing it the file to read. You can use this for source code, text documents, logs, etc. Similarly, you can reference **entire directories**:
+**快速用例：** 不用口头描述文件内容或图像，只需直接将Gemini CLI指向它即可。使用 `@` 语法，你可以将文件、目录或图像附加到提示中。这保证AI能准确看到这些文件中的内容作为[上下文](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Reference%20files%20or%20directories%20in,PDFs%2C%20audio%2C%20and%20video%20files)。例如：
 
 ```bash
-Refactor the code in @./utils/ to use async/await.
+向我解释这段代码：@./src/main.js
 ```
 
-By appending a path that ends in a slash, Gemini CLI will recursively include files from that [directory](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Include%20a%20whole%20directory%20) (within reason, respecting ignore files and size limits). This is great for multi-file refactors or analyses, as the AI can consider all relevant modules together.
+这将在提示中包含 `src/main.js` 的内容（在Gemini的上下文大小限制内），这样AI就可以阅读并解释[它](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Include%20a%20single%20file%3A)。
 
-Even more impressively, you can reference **binary files like images** in prompts. Gemini CLI (using the Gemini model's multimodal capabilities) can understand images. For example:
+这个 `@` *文件引用*是Gemini CLI为开发者提供的最强大功能之一。它消除了歧义——你不是要求模型依赖记忆或对文件的猜测，而是真正地把文件交给它阅读。你可以将此用于源代码、文本文档、日志等。类似地，你可以引用**整个目录**：
 
 ```bash
-Describe what you see in this screenshot: @./design/mockup.png
+重构 @./utils/ 中的代码以使用async/await。
 ```
 
-The image will be fed into the model, and the AI might respond with something like "This is a login page with a blue sign-in button and a header image," [etc](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Include%20an%20image%3A).. You can imagine the uses: reviewing UI mockups, organizing photos (as we'll see in a later tip), or extracting text from images (Gemini can do OCR as well).
+通过附加以斜杠结尾的路径，Gemini CLI将递归地包含该[目录](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Include%20a%20whole%20directory%20)中的文件（在合理范围内，尊重忽略文件和大小限制）。这对于多文件重构或分析非常有用，因为AI可以一起考虑所有相关模块。
 
-A few notes on using `@` references effectively:
-
-* **File limits:** Gemini 2.5 Pro has a huge context window (up to 1 million [tokens](https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/#:~:text=To%20use%20Gemini%20CLI%20free,per%20day%20at%20no%20charge)), so you can include quite large files or many files. However, extremely large files might be truncated. If a file is enormous (say, hundreds of thousands of lines), consider summarizing it or breaking it into parts. Gemini CLI will warn you if a reference is too large or if it skipped something due to size.
-
-* **Automatic ignoring:** By default, Gemini CLI respects your `.gitignore` and `.geminiignore` files when pulling in directory [context](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Reference%20files%20or%20directories%20in,PDFs%2C%20audio%2C%20and%20video%20files). So if you `@./` a project root, it will not dump huge ignored folders (like `node_modules`) into the prompt. You can customize ignore patterns with `.geminiignore` similarly to how `.gitignore` works.
-
-* **Explicit vs implicit context:** Taylor Mullen (the creator of Gemini CLI) emphasizes using `@` for *explicit context injection* rather than relying on the model's memory or summarizing things yourself. It's more precise and ensures the AI isn't hallucinating content. Whenever possible, point the AI to the source of truth (code, config files, documentation) with `@` references. This practice can significantly improve accuracy.
-
-* **Chaining references:** You can include multiple files in one prompt, like:
+更令人印象深刻的是，你可以在提示中引用**二进制文件如图像**。Gemini CLI（使用Gemini模型的多模态功能）可以理解图像。例如：
 
 ```bash
-Compare @./foo.py and @./bar.py and tell me differences.
+描述你在这个截图中看到的内容：@./design/mockup.png
 ```
 
-The CLI will include both files. Just be mindful of token limits; multiple large files might consume a lot of the context window.
+图像将被输入到模型中，AI可能会回应类似"这是一个带有蓝色登录按钮和标题图像的登录页面"[等](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Include%20an%20image%3A)。你可以想象其用途：审查UI模型、整理照片（正如我们将在后面的技巧中看到的），或从图像中提取文本（Gemini也可以进行OCR）。
 
-Using `@` is essentially how you **feed knowledge into Gemini CLI on the fly**. It turns the CLI into a multi-modal reader that can handle text and images. As a pro user, get into the habit of leveraging this - it's often faster and more reliable than asking the AI something like "Open the file X and do Y" (which it may or may not do on its own). Instead, you explicitly give it X to work with.
+有效使用 `@` 引用的几点注意事项：
 
-## Tip 8: On-the-Fly Tool Creation (Have Gemini Build Helpers)
+* **文件限制：** Gemini 2.5 Pro拥有巨大的上下文窗口（最多100万个[令牌](https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/#:~:text=To%20use%20Gemini%20CLI%20free,per%20day%20at%20no%20charge)），因此你可以包含相当大的文件或许多文件。但是，极大的文件可能会被截断。如果文件巨大（比如说，数十万行），考虑总结它或将其分成几部分。如果引用太大或由于大小而跳过了某些内容，Gemini CLI会警告你。
 
-**Quick use-case:** If a task at hand would benefit from a small script or utility, you can ask Gemini CLI to create that tool for you - right within your session. For example, you might say, "Write a Python script to parse all JSON files in this folder and extract the error fields." Gemini can generate the script, which you can then execute via the CLI. In essence, you can **dynamically extend the toolset** as you go.
+* **自动忽略：** 默认情况下，Gemini CLI在拉取目录[上下文](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Reference%20files%20or%20directories%20in,PDFs%2C%20audio%2C%20and%20video%20files)时会尊重你的 `.gitignore` 和 `.geminiignore` 文件。因此，如果你 `@./` 一个项目根目录，它不会将巨大的被忽略文件夹（如 `node_modules`）转储到提示中。你可以使用 `.geminiignore` 自定义忽略模式，类似于 `.gitignore` 的工作方式。
 
-Gemini CLI is not limited to its pre-existing tools; it can use its coding abilities to fabricate new ones when needed. This often happens implicitly: if you ask for something complex, the AI might propose writing a temporary file (with code) and then running it. As a user, you can also guide this process explicitly:
+* **显式vs隐式上下文：** Taylor Mullen（Gemini CLI的创建者）强调使用 `@` 进行*显式上下文注入*，而不是依赖模型的记忆或自己总结内容。这更精确，确保AI不会幻想内容。尽可能使用 `@` 引用将AI指向真相来源（代码、配置文件、文档）。这种做法可以显著提高准确性。
+
+* **链接引用：** 你可以在一个提示中包含多个文件，例如：
+
+```bash
+比较 @./foo.py 和 @./bar.py 并告诉我差异。
+```
+
+CLI将包含两个文件。只需注意令牌限制；多个大文件可能会消耗大量上下文窗口。
+
+使用 `@` 本质上是你**即时向Gemini CLI提供知识**的方式。它将CLI变成一个可以处理文本和图像的多模态阅读器。作为高级用户，养成利用这一点的习惯——它通常比询问AI诸如"打开文件X并执行Y"之类的事情更快更可靠（它可能做也可能不做）。相反，你明确地给它X来工作。
+
+## 技巧8：即时创建工具（让Gemini构建辅助工具）
+
+**快速用例：** 如果手头的任务受益于小脚本或实用程序，你可以要求Gemini CLI为你创建该工具——就在你的会话中。例如，你可能会说，"编写一个Python脚本来解析此文件夹中的所有JSON文件并提取错误字段。"Gemini可以生成脚本，然后你可以通过CLI执行它。本质上，你可以在进行中**动态扩展工具集**。
+
+Gemini CLI不限于其预先存在的工具；在需要时，它可以使用其编码能力制造新工具。这通常隐式发生：如果你要求复杂的东西，AI可能会提议编写一个临时文件（带代码）然后运行它。作为用户，你也可以明确地指导这个过程：
 
 * **Creating scripts:** You can prompt Gemini to create a script or program in the language of your choice. It will likely use the `write_file` tool to create the file. For instance:
 
