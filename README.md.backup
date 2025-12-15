@@ -39,114 +39,114 @@
 - [技巧28：使用 `扩展` 扩展Gemini CLI](#技巧28使用-扩展-扩展gemini-cli)
 - [技巧29：柯基模式彩蛋 🐕](#附加趣味柯基模式彩蛋-)
 
-## 快速入门
+## Getting Started
 
-**安装：** 你可以通过npm安装Gemini CLI。全局安装使用：
+**Installation:** You can install Gemini CLI via npm. For a global install, use:
 
 ```bash
 npm install -g @google/gemini-cli
 ```
 
-或者使用 `npx` 运行而无需安装：
+Or run it without installing using `npx`:
 
 ```bash
 npx @google/gemini-cli
 ```
 
-Gemini CLI可在所有主流平台上使用（它是用Node.js/TypeScript构建的）。安装后，只需在终端中运行 `gemini` 命令即可启动交互式[CLI](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Interactive%20Mode%20,conversational%20session)。
+Gemini CLI is available on all major platforms (it's built with Node.js/TypeScript). Once installed, simply run the `gemini` command in your terminal to launch the interactive [CLI](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Interactive%20Mode%20,conversational%20session).
 
-**身份验证：** 首次使用时，你需要通过Gemini服务进行身份验证。你有两个选项：(1) **Google账户登录（免费套餐）** - 这允许你免费使用Gemini 2.5 Pro，并享有慷慨的使用限制（约每分钟60个请求，每[天](https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/#:~:text=Unmatched%20usage%20limits%20for%20individual,developers)1000个请求）。启动时，Gemini CLI会提示你使用Google账户登录（无需[计费](https://genmind.ch/posts/Howto-Supercharge-Your-Terminal-with-Gemini-CLI/#:~:text=%2A%20Google,Google%20AI%20Studio%2C%20then%20run)）。(2) **API密钥（付费或更高级别访问）** - 你可以从Google AI [Studio](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=1,key%20from%20Google%20AI%20Studio)获取API密钥，并设置环境变量 `GEMINI_API_KEY` 来使用[它](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Method%201%3A%20Shell%20Environment%20Variable,zshrc)。
+**Authentication:** On first use, you'll need to authenticate with the Gemini service. You have two options: (1) **Google Account Login (free tier)** - this lets you use Gemini 2.5 Pro for free with generous usage limits (about 60 requests/minute and 1,000 requests per [day](https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/#:~:text=Unmatched%20usage%20limits%20for%20individual,developers). On launch, Gemini CLI will prompt you to sign in with a Google account (no billing [required](https://genmind.ch/posts/Howto-Supercharge-Your-Terminal-with-Gemini-CLI/#:~:text=%2A%20Google,Google%20AI%20Studio%2C%20then%20run). (2) **API Key (paid or higher-tier access)** - you can get an API key from Google AI [Studio](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=1,key%20from%20Google%20AI%20Studio) and set the environment variable `GEMINI_API_KEY` to use [it](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Method%201%3A%20Shell%20Environment%20Variable,zshrc).
 
-API密钥使用可以提供更高的配额和企业数据使用保护；在付费/计费使用中，提示不会用于训练，但日志可能会为了[安全](https://genmind.ch/posts/Howto-Supercharge-Your-Terminal-with-Gemini-CLI/#:~:text=responses%20may%20be%20logged%20for,Google%20AI%20Studio%2C%20then%20run)而保留。
+API key usage can offer higher quotas and enterprise data‑use protections; prompts aren't used for training on paid/billed usage, though logs may be retained for [safety](https://genmind.ch/posts/Howto-Supercharge-Your-Terminal-with-Gemini-CLI/#:~:text=responses%20may%20be%20logged%20for,Google%20AI%20Studio%2C%20then%20run).
 
-例如，添加到你的shell配置文件：
+For example, add to your shell profile:
 
 ```bash
 export GEMINI_API_KEY="YOUR_KEY_HERE"
 ```
 
-**基本用法：** 要启动交互式会话，只需运行不带参数的 `gemini`。你会看到一个 `gemini>` 提示符，你可以在此输入请求或命令。例如：
+**Basic Usage:** To start an interactive session, just run `gemini` with no arguments. You'll get a `gemini>` prompt where you can type requests or commands. For instance:
 
 ```bash
 $ gemini
-gemini> 使用SQLite创建一个React配方管理应用
+gemini> Create a React recipe management app using SQLite
 ```
 
-然后你可以观看Gemini CLI创建文件、安装依赖、运行测试等，来满足你的请求。如果你喜欢一次性调用（非交互式），使用 `-p` 标志和提示，例如：
+You can then watch as Gemini CLI creates files, installs dependencies, runs tests, etc., to fulfill your request. If you prefer a one-shot invocation (non-interactive), use the `-p` flag with a prompt, for example:
 
 ```bash
-gemini -p "总结附加文件的要点。@./report.txt"
+gemini -p "Summarize the main points of the attached file. @./report.txt"
 ```
 
-这将输出单个响应并[退出](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=gemini)。你还可以将输入通过管道传递给Gemini CLI：例如，`echo "数到10" | gemini` 将通过[stdin](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=gemini%20,txt)提供提示。
+This will output a single response and [exit](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=gemini). You can also pipe input into Gemini CLI: for example, `echo "Count to 10" | gemini` will feed the prompt via [stdin](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=gemini%20,txt).
 
-**CLI界面：** Gemini CLI提供了类似REPL的丰富界面。它支持**斜杠命令**（以 `/` 为前缀的特殊命令，用于控制会话、工具和设置）和**感叹号命令**（以 `!` 为前缀直接执行shell命令）。我们将在下面的专业技巧中介绍其中许多。默认情况下，Gemini CLI在安全模式下运行，任何修改系统的操作（写文件、运行shell命令等）都会要求确认。当提出工具操作时，你会看到差异或命令，并被提示（`Y/n`）批准或拒绝它。这确保AI不会在未经你同意的情况下进行不需要的更改。
+**CLI Interface:** Gemini CLI provides a rich REPL-like interface. It supports **slash commands** (special commands prefixed with `/` for controlling the session, tools, and settings) and **bang commands** (prefixed with `!` to execute shell commands directly). We'll cover many of these in the pro tips below. By default, Gemini CLI operates in a safe mode where any action that modifies your system (writing files, running shell commands, etc.) will ask for confirmation. When a tool action is proposed, you'll see a diff or command and be prompted (`Y/n`) to approve or reject it. This ensures the AI doesn't make unwanted changes without your consent.
 
-基础知识已经介绍完毕，现在让我们探索一系列专业技巧和隐藏功能，帮助你充分利用Gemini CLI。每个技巧都先给出一个简单的示例，然后深入介绍细节和细微差别。这些技巧融合了工具创建者（如Taylor Mullen）和Google开发者关系团队以及更广泛社区的建议和见解，作为Gemini CLI高级用户的**权威指南**。
+With the basics out of the way, let's explore a series of pro tips and hidden features to help you get the most out of Gemini CLI. Each tip is presented with a simple example first, followed by deeper details and nuances. These tips incorporate advice and insights from the tool's creators (e.g. Taylor Mullen) and the Google Developer Relations team, as well as the broader community, to serve as a **canonical guide for power users** of Gemini CLI.
 
-## 技巧1：使用 `GEMINI.md` 实现持久化上下文
+## Tip 1: Use `GEMINI.md` for Persistent Context
 
-**快速用例：** 停止在提示中重复自己。通过创建 `GEMINI.md` 文件提供项目特定的上下文或说明，这样AI始终拥有重要的背景知识，而无需每次都告诉[它](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Context%20Files%20%28)。
+**Quick use-case:** Stop repeating yourself in prompts. Provide project-specific context or instructions by creating a `GEMINI.md` file, so the AI always has important background knowledge without being told every [time](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Context%20Files%20%28).
 
-在项目上工作时，你通常有某些总体细节——例如编码风格指南、项目架构或重要事实——你希望AI记住。Gemini CLI允许你将这些编码到一个或多个 `GEMINI.md` 文件中。只需在项目中创建一个 `.gemini` 文件夹（如果尚不存在），并添加一个名为 `GEMINI.md` 的Markdown文件，其中包含你希望AI保留的任何注释或说明。例如：
+When working on a project, you often have certain overarching details - e.g. coding style guidelines, project architecture, or important facts - that you want the AI to keep in mind. Gemini CLI allows you to encode these in one or more `GEMINI.md` files. Simply create a `.gemini` folder (if not already present) in your project, and add a Markdown file named `GEMINI.md` with whatever notes or instructions you want the AI to persist. For example:
 
 ```markdown
-# Project Phoenix - AI助手
+# Project Phoenix - AI Assistant
 
-- 所有Python代码必须遵循PEP 8风格。  
-- 使用4个空格缩进。  
-- 用户正在构建数据管道；优先使用函数式编程范式。
+- All Python code must follow PEP 8 style.  
+- Use 4 spaces for indentation.  
+- The user is building a data pipeline; prefer functional programming paradigms.
 ```
 
-将此文件放在项目根目录中（或子目录中以获取更细粒度的上下文）。现在，每当你在该项目中运行 `gemini` 时，它将自动将这些说明加载到[上下文](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Context%20Files%20%28)中。这意味着模型将*始终*准备好这些内容，避免了在每个提示前添加相同指导的需要。
+Place this file in your project root (or in subdirectories for more granular context). Now, whenever you run `gemini` in that project, it will automatically load these instructions into [context](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Context%20Files%20%28). This means the model will *always* be primed with them, avoiding the need to prepend the same guidance to every prompt.
 
-**工作原理：** Gemini CLI使用分层上下文加载[系统](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Hierarchical%20Loading%3A%20The%20CLI%20combines,The%20loading%20order%20is)。它会将**全局上下文**（来自 `~/.gemini/GEMINI.md`，你可以将其用于跨项目默认设置）与你的**项目特定 `GEMINI.md`** 结合，甚至包括子文件夹中的上下文文件。更具体的文件会覆盖更通用的文件。你可以随时使用以下命令检查加载了什么上下文：
+**How it works:** Gemini CLI uses a hierarchical context loading [system](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Hierarchical%20Loading%3A%20The%20CLI%20combines,The%20loading%20order%20is). It will combine **global context** (from `~/.gemini/GEMINI.md`, which you can use for cross-project defaults) with your **project-specific `GEMINI.md`**, and even context files in subfolders. More specific files override more general ones. You can inspect what context was loaded at any time by using the command:
 
 ```bash
 /memory show
 ```
 
-这将显示AI看到的完整组合[上下文](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=,current%20conversation%20with%20a%20tag)。如果你对 `GEMINI.md` 进行了更改，使用 `/memory refresh` 可以在不重启[会话](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=,current%20conversation%20with%20a%20tag)的情况下重新加载上下文。
+This will display the full combined context the AI [sees](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=,current%20conversation%20with%20a%20tag). If you make changes to your `GEMINI.md`, use `/memory refresh` to reload the context without restarting the [session](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=,current%20conversation%20with%20a%20tag).
 
-**专业技巧：** 使用 `/init` 斜杠命令快速生成起始 `GEMINI.md`。在新项目中运行 `/init` 会创建一个模板上下文文件，其中包含检测到的技术栈、项目摘要[等](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=,directory%20workspace%20%28e.g.%2C%20%60add)信息。然后你可以编辑和扩展该文件。对于大型项目，考虑将上下文分成多个文件，并使用 `@include` 语法将它们**导入**到 `GEMINI.md` 中。例如，你的主 `GEMINI.md` 可以有类似 `@./docs/prompt-guidelines.md` 的行来引入额外的上下文[文件](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Modularizing%20Context%20with%20Imports%3A%20You,files)。这样可以保持你的说明有序。
+**Pro Tip:** Use the `/init` slash command to quickly generate a starter `GEMINI.md`. Running `/init` in a new project creates a template context file with information like the tech stack detected, a summary of the project, [etc](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=,directory%20workspace%20%28e.g.%2C%20%60add).. You can then edit and expand that file. For large projects, consider breaking the context into multiple files and **importing** them into `GEMINI.md` with `@include` syntax. For example, your main `GEMINI.md` could have lines like `@./docs/prompt-guidelines.md` to pull in additional context [files](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Modularizing%20Context%20with%20Imports%3A%20You,files). This keeps your instructions organized.
 
-通过精心设计的 `GEMINI.md`，你实际上给了Gemini CLI项目需求和约定的"记忆"。这种**持久化上下文**能带来更相关的响应，减少来回的提示工程。
+With a well-crafted `GEMINI.md`, you essentially give Gemini CLI a "memory" of the project's requirements and conventions. This **persistent context** leads to more relevant responses and less back-and-forth prompt engineering.
 
-## 技巧2：创建自定义斜杠命令
+## Tip 2: Create Custom Slash Commands
 
-**快速用例：** 通过定义自己的斜杠命令来加速重复任务。例如，你可以创建一个 `/test:gen` 命令，从描述生成单元测试，或者 `/db:reset` 来删除并重新创建测试数据库。这通过针对你工作流程定制的单行命令扩展了Gemini CLI的功能。
+**Quick use-case:** Speed up repetitive tasks by defining your own slash commands. For example, you could make a command `/test:gen` that generates unit tests from a description, or `/db:reset` that drops and recreates a test database. This extends Gemini CLI's functionality with one-liners tailored to your workflow.
 
-Gemini CLI支持**自定义斜杠命令**，你可以在简单的配置文件中定义它们。在底层，这些本质上是预定义的提示模板。要创建一个，在 `~/.gemini/` 下创建一个 `commands/` 目录用于全局命令，或在项目的 `.gemini/` 文件夹中创建用于项目特定[命令](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Custom%20Commands)。在 `commands/` 内，为每个新命令创建一个TOML文件。文件名格式决定命令名称：例如，文件 `test/gen.toml` 定义命令 `/test:gen`。
+Gemini CLI supports **custom slash commands** that you can define in simple configuration files. Under the hood, these are essentially pre-defined prompt templates. To create one, make a directory `commands/` under either `~/.gemini/` for global commands or in your project's `.gemini/` folder for project-specific [commands](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Custom%20Commands). Inside `commands/`, create a TOML file for each new command. The file name format determines the command name: e.g. a file `test/gen.toml` defines a command `/test:gen`.
 
-让我们通过一个例子来演示。假设你想要一个从需求描述生成单元测试的命令。你可以创建 `~/.gemini/commands/test/gen.toml`，内容如下：
+Let's walk through an example. Say you want a command to generate a unit test from a requirement description. You could create `~/.gemini/commands/test/gen.toml` with the following content:
 
 ```markdown
-# 调用方式：/test:gen "测试描述"  
-description \= "根据需求生成单元测试。"  
+# Invoked as: /test:gen "Description of the test"  
+description \= "Generates a unit test based on a requirement."  
 prompt \= """  
-你是一位专家测试工程师。基于以下需求，请使用Jest框架编写一个全面的单元测试。
+You are an expert test engineer. Based on the following requirement, please write a comprehensive unit test using the Jest framework.
 
-需求：{{args}}  
+Requirement: {{args}}  
 """
 ```
 
-现在，在重新加载或重启Gemini CLI后，你只需输入：
+Now, after reloading or restarting Gemini CLI, you can simply type:
 
 ```bash
-/test:gen "确保登录按钮在成功时重定向到仪表板"
+/test:gen "Ensure the login button redirects to the dashboard upon success"
 ```
 
-Gemini CLI将识别 `/test:gen` 并用提供的参数（在本例中是需求）替换提示模板中的 `{{args}}`。然后AI将相应地生成Jest单元[测试](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Example%3A%20%60)。`description` 字段是可选的，但在你运行 `/help` 或 `/tools` 列出可用命令时会使用。
+Gemini CLI will recognize `/test:gen` and substitute the `{{args}}` in your prompt template with the provided argument (in this case, the requirement). The AI will then proceed to generate a Jest unit test [accordingly](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Example%3A%20%60). The `description` field is optional but is used when you run `/help` or `/tools` to list available commands.
 
-这个机制非常强大——实际上，你可以用自然语言编写AI脚本。社区创建了许多有用的自定义命令。例如，Google的DevRel团队分享了一组*10个实用工作流命令*（通过开源仓库），演示了如何编写常见流程脚本，如创建API文档、清理数据或设置样板[代码](https://cloud.google.com/blog/topics/developers-practitioners/agent-factory-recap-deep-dive-into-gemini-cli-with-taylor-mullen#:~:text=,to%20generate%20a%20better%20output)。通过定义自定义命令，你将复杂的提示（或一系列提示）打包成可重用的快捷方式。
+This mechanism is extremely powerful - effectively, you can script the AI with natural language. The community has created numerous useful custom commands. For instance, Google's DevRel team shared a set of *10 practical workflow commands* (via an open-source repo) demonstrating how you can script common flows like creating API docs, cleaning data, or setting up boilerplate [code](https://cloud.google.com/blog/topics/developers-practitioners/agent-factory-recap-deep-dive-into-gemini-cli-with-taylor-mullen#:~:text=,to%20generate%20a%20better%20output). By defining a custom command, you package a complex prompt (or series of prompts) into a reusable shortcut.
 
-**专业技巧：** 自定义命令也可以用来强制格式化或为某些任务应用AI的"角色"。例如，你可能有一个 `/review:security` 命令，它总是在提示前加上"你是一位安全审计员..."来审查代码中的漏洞。这种方法确保AI对特定类别任务的响应保持一致性。
+**Pro Tip:** Custom commands can also be used to enforce formatting or apply a "persona" to the AI for certain tasks. For example, you might have a `/review:security` command that always prefaces the prompt with "You are a security auditor..." to review code for vulnerabilities. This approach ensures consistency in how the AI responds to specific categories of tasks.
 
-要与团队共享命令，你可以在项目仓库中提交TOML文件（在 `.gemini/commands` 目录下）。拥有Gemini CLI的团队成员在项目中工作时将自动获取这些命令。这是在团队中**标准化AI辅助工作流程**的好方法。
+To share commands with your team, you can commit the TOML files in your project's repo (under `.gemini/commands` directory). Team members who have Gemini CLI will automatically pick up those commands when working in the project. This is a great way to **standardize AI-assisted workflows** across a team.
 
-## 技巧3：用自己的 `MCP` 服务器扩展Gemini
+## Tip 3: Extend Gemini with Your Own `MCP` Servers
 
-**快速用例：** 假设你希望Gemini与外部系统或不是内置的自定义工具交互——例如，查询专有数据库，或与Figma设计集成。你可以通过运行自定义**模型上下文协议（MCP）服务器**并将其插入Gemini [CLI](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Extend%20the%20CLI%20with%20your,add%7Clist%7Cremove%3E%60%20commands)来实现。MCP服务器让你可以向Gemini添加新工具和能力，有效地**扩展智能体**。
+**Quick use-case:** Suppose you want Gemini to interface with an external system or a custom tool that isn't built-in - for example, query a proprietary database, or integrate with Figma designs. You can do this by running a custom **Model Context Protocol (MCP) server** and plugging it into Gemini [CLI](https://www.philschmid.de/gemini-cli-cheatsheet#:~:text=Extend%20the%20CLI%20with%20your,add%7Clist%7Cremove%3E%60%20commands). MCP servers let you add new tools and abilities to Gemini, effectively **extending the agent**.
 
 Gemini CLI comes with several MCP servers out-of-the-box (for instance, ones enabling Google Search, code execution sandboxes, etc.), and you can add your own. An MCP server is essentially an external process (it could be a local script, a microservice, or even a cloud endpoint) that speaks a simple protocol to handle tasks for Gemini. This architecture is what makes Gemini CLI so [extensible](https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/#:~:text=,interactively%20within%20your%20scripts).
 
